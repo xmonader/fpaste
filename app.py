@@ -1,3 +1,4 @@
+import os
 from flask import Flask 
 from models import db, User, Paste
 from flask_migrate import Migrate
@@ -5,7 +6,9 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from flask_basicauth import BasicAuth
 from fixtures import do_fixtures
-import os
+from flask_graphql import GraphQLView
+from schema import schema
+
 
 DBDIR = os.path.join(os.getcwd(), "db")
 
@@ -49,6 +52,10 @@ db.session.autocommit = True
 migrate = Migrate(app, db)
 
 
+class EnhancedModelView(ModelView):
+    can_view_details = True
+
+
 def create_all():
     try:
         db.create_all()
@@ -74,7 +81,9 @@ if __name__ == "__main__":
         do_fixtures()
     except:
         raise
+
+    app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
     admin = Admin(app, "FPasteCP")
     for m in models:
-        admin.add_view(ModelView(m, db.session))
+        admin.add_view(EnhancedModelView(m, db.session))
     app.run(debug=True, port=8002)
