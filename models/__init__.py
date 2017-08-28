@@ -22,12 +22,13 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(50), nullable=False, default='')
 
     # user has many pastes
-    pastes = db.relationship("Paste", back_populates="user")
+    pastes = db.relationship("Paste", backref="user")
     def is_active(self):
       return self.is_enabled
 
     def __str__(self):
       return self.username
+
 
 class Paste(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
@@ -35,8 +36,7 @@ class Paste(db.Model):
     code = db.Column(db.Text())
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    user = db.relationship("User", back_populates="pastes")
 
     def __str__(self):
-      return self.username
+      return self.title
 
