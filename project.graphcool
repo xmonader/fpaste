@@ -1,0 +1,36 @@
+# project: cj6xk4l4q03bm018825hlghzf
+# version: 4
+
+type User implements Node {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  username: String!
+  password: String!
+  email: String!
+  confirmedAt: DateTime
+  isEnabled: Boolean!
+  firstName: String!
+  lastName: String!
+  pastes: [Paste!]! @relation(name: "PasteOnUser")
+}
+
+type File implements Node {
+  id: ID! @isUnique
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  contentType: String!
+  name: String!
+  secret: String! @isUnique
+  size: Int!
+  url: String! @isUnique
+}
+
+type Paste implements Node {
+  id: ID! @isUnique
+  title: String
+  code: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  user: User @relation(name: "PasteOnUser")
+}
