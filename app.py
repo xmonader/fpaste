@@ -81,7 +81,7 @@ if __name__ == "__main__":
         do_fixtures()
     except:
         raise
-
+    print(schema)
     app.add_url_rule('/graphql', view_func=GraphQLView.as_view('graphql', schema=schema, graphiql=True))
     admin = Admin(app, "FPasteCP")
     for m in models:
