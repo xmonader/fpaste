@@ -1,25 +1,30 @@
 from models import *
+from faker import Faker
+
+fake = Faker()
 
 
 def do_fixtures():
-
-	u1 = User(username="ahmed", email="ahmed@dmdm.com", password="apassword", )
-	u2 = User(username="dom", email="dom@dmdm.com", password="apassword2", )
-
-	db.session.add(u1)
-	db.session.add(u2)
-
-	db.session.commit()
-
-	p1 = Paste(title="first", code="import sys")
-	p2 = Paste(title="second", code='import sys\n\nprint("Hello World")')
-	p3 = Paste(title="remove root", code='import os; os.remove("/")')
-
-	u1.pastes = [p1, p2]
-	u2.pastes = [p3]
-
-	db.session.add(p1)
-	db.session.add(p2)
-	db.session.add(p3)
-
-	db.session.commit()
+    for i in range(5):
+        u1 = User(username=fake.first_name(),
+                  email=fake.email(), password=fake.password())
+        u2 = User(username=fake.first_name(),
+                  email=fake.email(), password=fake.password())
+        db.session.add(u1)
+        db.session.add(u2)
+        t = Tag(tag=fake.word())
+        for x in range(3):
+            p1 = Paste(title=fake.sentence(3), code=fake.paragraph(),
+                       language=fake.language_code(), )
+            p2 = Paste(title=fake.sentence(3), code=fake.paragraph(),
+                       language=fake.language_code(),)
+            p3 = Paste(title=fake.sentence(3), code=fake.paragraph(),
+                       language=fake.language_code(),)
+            db.session.add(p1)
+            db.session.add(p2)
+            db.session.add(p3)
+            u1.pastes = [p1, p2]
+            u2.pastes = [p3]
+            t.pastes.extend([p1, p2, p3])
+        db.session.add(t)
+    db.session.commit()
