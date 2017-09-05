@@ -1,8 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_user import UserMixin
 
+from uuid import uuid4
 db = SQLAlchemy()
 
+
+generate_id = lambda : str(uuid4())[:4] 
 
 class AdminLinksMixin:
     ADMIN_EDIT_LINK = "/{modelname}/edit/?id={modelid}&url=/{modelname}/"
@@ -23,7 +26,7 @@ class AdminLinksMixin:
 
 class Tag(db.Model, AdminLinksMixin):
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(4), default=generate_id, primary_key=True)
 
     tag = db.Column(db.String(50), nullable=False)
     # tag has many pastes
@@ -34,7 +37,7 @@ class Tag(db.Model, AdminLinksMixin):
 
 
 class User(db.Model, UserMixin, AdminLinksMixin):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(4), default=generate_id, primary_key=True)
 
     # User Authentication information
     username = db.Column(db.String(50), nullable=False)
@@ -60,7 +63,7 @@ class User(db.Model, UserMixin, AdminLinksMixin):
 
 
 class Paste(db.Model, AdminLinksMixin):
-    id = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.String(4), default=generate_id, primary_key=True)
     title = db.Column(db.String(50))
     code = db.Column(db.Text())
 
